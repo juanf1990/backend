@@ -1,16 +1,18 @@
-const pg = require("pg");
+import pg from "pg";
 
-const config = {
-  user: "postgres", //this is the db user credential
-  database: "econnect",
-  password: "admin",
-  port: 5432,
-  max: 10, // max number of clients in the pool
-  idleTimeoutMillis: 30000,
-};
+const connectionString = process.env.POSTGRES_CONNECTION_URL;
 
-const pool = new pg.Pool(config);
+if (undefined === connectionString) {
+  throw new Error("POSTGRES_CONNECTION_URL is not defined");
+}
 
-pool.on("connect", () => {
-  console.log("connected to the Database");
+export const query = new pg.Pool({
+  connectionString: connectionString,
 });
+
+// const { Pool } = pkg
+// export const pool = new Pool({
+// connectionString: process.env.POSTGRES_CONNECTION_URL })
+
+// export default function query (text, params) { return pool.query(text, params)
+// }
