@@ -11,25 +11,5 @@ exports.findAll = (req, res) => {};
 // Find a single Post with an id
 exports.findOne = (req, res) => {};
 
-// Update a Post by the id in the request
-exports.update = (req, res) => {};
-
-// Delete a Post with the specified id in the request
+// Delete an account with the specified id in the request // TODO: MOVE TO USER CONTROLLER
 exports.delete = (req, res) => {};
-
-// Likes a Post with the specified id in the request
-exports.like = (req, res) => {};
-
-// Dislikes a Post with the specified id in the request
-exports.dislike = (req, res) => {};
-
-// Comment on a post with the specified id in the request
-
-exports.comment = (req, res) => {};
-
-// Delete an account with the specified id in the request
-exports.delete = (req, res) => {};
-
-// Find all unread posts
-
-exports.findAllunread = (req, res) => {};

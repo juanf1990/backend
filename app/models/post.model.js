@@ -6,11 +6,8 @@ module.exports = (sequelize, Sequelize) => {
     content: {
       type: Sequelize.STRING,
     },
-    like: {
-      type: Sequelize.STRING,
-    },
-    dislike: {
-      type: Sequelize.STRING,
+    readBy: {
+      type: Sequelize.ARRAY(Sequelize.INTEGER),
     },
   });
 
