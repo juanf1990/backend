@@ -1,8 +1,10 @@
 import "dotenv/config";
 import cors from "cors";
 import express, { application } from "express";
-import models from "./models";
+import models, { sequelize } from "./models";
 import routes from "./routes";
+import morgan from "morgan";
+import "@babel/polyfill";
 
 const app = express();
 
@@ -11,16 +13,31 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
 
+app.use(morgan("tiny"));
+
 app.use("/session", routes.session);
 app.use("/users", routes.user);
 app.use("/posts", routes.post);
 
-app.get("*", function (req, res, next) {
-  const error = new Error(`${req.ip} tried to access ${req.originalUrl}`);
+app.get("/", (req, res) => {
+  res.status(301).redirect("/api");
+});
 
-  error.statusCode = 301;
+app.get("/api", (req, res) => {
+  res.status(200).send({ message: "Welcome to the API" });
+});
 
-  next(error);
+app.use((req, res) =>
+  res.status(404).send({
+    error:
+      "Oops! Endpoint not found, Please Check that you are entering the right thing!",
+  })
+);
+app.use((err, req, res) => {
+  res.status(500).send({
+    error:
+      "Invalid Request! Please Check that you are entering the right thing!",
+  });
 });
 
 app.use((error, req, res, next) => {
@@ -33,18 +50,18 @@ app.use((error, req, res, next) => {
   return res.status(error.statusCode).json({ error: error.toString() });
 });
 
-// app.use(async (req, res, next) => {
-//   req.context = {
-//     models,
-//     me: await models.User.findByLogin("rwieruch"),
-//   };
-//   next();
-// });
+app.use(async (req, res, next) => {
+  req.context = {
+    models,
+    me: await models.User.findByLogin("rwieruch"),
+  };
+  next();
+});
 
 sequelize.sync().then(() => {
-  app.listen(process.env.PORT, () =>
-    console.log(`Example app listening on port ${process.env.PORT}!`)
-  );
+  app.listen(process.env.PORT, () => {
+    console.log(`Example app listening on port ${process.env.PORT}!`);
+  });
 });
 
 const createUserwithPosts = async () => {
@@ -72,10 +89,12 @@ createUserwithPosts();
 
 const createUser = async () => {
   await models.User.create({
-    email: "john@jow@.com",
+    email: "john@jow.com",
     fullName: "Jon Doe",
     password: "password",
   });
 };
 
 createUser();
+
+export default app;
